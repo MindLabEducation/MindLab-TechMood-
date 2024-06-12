@@ -1,0 +1,68 @@
+import requests
+import random
+
+#Αυτή η συνάρτηση προσφέρει την διεπαφή με το μοντέλο μηχανικής μάθησης
+def classify(text):
+    key = "ΤΟ KEY ΜΠΑΙΝΕΙ ΕΔΩ"
+    url = "https://machinelearningforkids.co.uk/api/scratch/"+ key + "/classify"
+
+    response = requests.get(url, params={ "data" : text })
+
+    if response.ok:
+        responseData = response.json()
+        topMatch = responseData[0]
+        return topMatch
+    else:
+        response.raise_for_status()
+
+#Εδώ υπάρχουν πόροι που θα χρησιμοποιηθούν, όπως μουσική και αστείες ιστορίες
+list_of_songs = ["https://www.youtube.com/watch?v=shoVsQhou-8","https://www.youtube.com/watch?v=6JQm5aSjX6g","https://www.youtube.com/watch?v=4Tr0otuiQuU","https://www.youtube.com/watch?v=JHW857NQ8vc"]
+list_of_stories = ["Λέει ο Τοτός στον Μπόμπο:- Η μαμά μου είναι τελείως άδικη. Όλο με μαλώνει για κάτι που δεν έχω κάνει ποτέ!- Για ποιο πράγμα σε μαλώνει; ρωτάει ο Μπόμπος.- Για τα μαθηματικά !!!!!","Ρωτάει ο δάσκαλος τον μαθητή:- Γιαννάκη, ποιος έφτιαξε την Ακρόπολη; και του λέει ο διπλανός του σιγανά:- Ο Ικτίνος και ο Καλλικράτης.Ο Γιαννάκης δεν άκουσε καλά και λέει στον δάσκαλο:-Το κτήνος ο Καλλικράτης.","Ο μπέμπης στο μεγαλύτερο αδερφό:- Αποστόλη, θα μου δώσεις τλία παγωτίνια;- Δεν σου δίνω τίποτα!- Γιατιιιιί;- Αν δεν πεις τρία αντί για τλία παγωτίνια δεν παίρνεις.- Καλά τότε. Δώσε μου πέντε!"]
+
+#Σε αυτό το σημείο γίνεται η επικοινωνία με τον χρήστη
+userword = input("Γεια σου! Πώς αισθάνεσαι σήμερα;")
+demo = classify(userword)
+
+label = demo["class_name"]
+confidence = demo["confidence"]
+
+while confidence<70:
+  userword = input("Εξήγησέ μου λίγο καλύτερα πώς αισθάνεσαι:")
+  demo = classify(userword)
+  label = demo["class_name"]
+  confidence = demo["confidence"]
+
+#Σε αυτό το σημείο επιλέγεται τι θα προτείνει ο υπολογιστής
+if label=="happy":
+  print("Ακου αυτή τη μουσική:")
+  randomnumber = random.randint(0,3)
+  print(list_of_songs[randomnumber])
+  print("")
+elif label=="sad":
+  print("Διάβασε την παρακάτω αστεία ιστορία!")
+  randomnumber = random.randint(0,2)
+  print(list_of_stories[randomnumber])
+  print("")
+elif label=="bored":
+  print("Θα παίξουμε ένα παιχνίδι:")
+  print("Μάντεψε ποιον αριθμό έχω στο μυαλό μου!")
+  usernumber = int(input("Δώσε έναν αριθμό από το 1 έως το 6!"))
+  computernumber = random.randint(1,6)
+  if usernumber == computernumber:
+    print("Μπράβο!! Βρήκες τον αριθμό!")
+  elif usernumber > computernumber:
+    print("Ο αριθμός που έδωσες είναι μεγαλύτερος από αυτόν που εχω στο μυαλό μου.")
+    usernumber = int(input("Δώσε για άλλη μία φορά έναν αριθμό:"))
+    if usernumber == computernumber:
+      print("Μπράβο!! Βρήκες τον αριθμό!")
+    else:
+      print("Δυστυχώς δεν βρήκες τον αριθμό. Ο αριθμός ήταν:")
+      print(computernumber)
+  else:
+    print("Ο αριθμός που έδωσες είναι μικρότερος από αυτόν που έχω στο μυαλό μου.")
+    usernumber = int(input("Δώσε για άλλη μία φορά έναν αριθμό:"))
+    if usernumber == computernumber:
+      print("Μπράβο!! Βρήκες τον αριθμό!")
+    else:
+      print("Δυστυχώς δεν βρήκες τον αριθμό. Ο αριθμός ήταν:")
+      print(computernumber)
